@@ -6,7 +6,11 @@
 #include "browser_manager.h"
 #include "control_server.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 #include <atomic>
 #include <chrono>
@@ -84,7 +88,12 @@ int main(int argc, char** argv) {
     }
   }).detach();
   for (;;) {
+#ifdef _WIN32
+    // POSIX pause() replacement for Windows builds.
+    ::Sleep(1000);
+#else
     pause();
+#endif
   }
 #endif
   return 0;

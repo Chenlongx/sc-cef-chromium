@@ -3,6 +3,10 @@
 #include <functional>
 #include <string>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+
 namespace sc_cef {
 
 using LineHandler = std::function<std::string(const std::string& line)>;
@@ -19,7 +23,16 @@ class ControlServer {
 
  private:
   LineHandler handler_;
-  int listen_fd_ = -1;
+  // POSIX fd vs Windows SOCKET handle.
+#ifdef _WIN32
+  using SocketHandle = SOCKET;
+  static constexpr SocketHandle InvalidSocket = INVALID_SOCKET;
+#else
+  using SocketHandle = int;
+  static constexpr SocketHandle InvalidSocket = -1;
+#endif
+
+  SocketHandle listen_fd_ = InvalidSocket;
   int port_ = 0;
   bool running_ = false;
 };
