@@ -1,0 +1,29 @@
+# Chromium / CEF source trees (multi-GB)
+third_party/
+.depot_tools/
+
+# Build outputs
+out/
+dist/
+*.zip
+*.tar.gz
+*.dmg
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.user
+*.swp
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+.wrangler/
+
+# Local CEF / helper binaries (rebuild via scripts)
+helper/build/
+helper/Frameworks/
+.venv-ci/
+*.app/

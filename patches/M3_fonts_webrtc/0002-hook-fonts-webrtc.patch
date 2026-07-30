@@ -1,0 +1,25 @@
+From: SC-CEF <dev@mediamingle.cn>
+Subject: [PATCH] M3: hook fonts / webrtc / mediaDevices
+
+diff --git a/third_party/blink/renderer/modules/mediastream/media_devices.cc b/third_party/blink/renderer/modules/mediastream/media_devices.cc
+index d4a7ab7..9182b25 100644
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.cc
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc
+@@ -72,8 +72,17 @@
+ #include "third_party/blink/renderer/platform/scheduler/public/event_loop.h"
+ #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
+ #include "third_party/blink/renderer/platform/wtf/functional.h"
++#include "third_party/sc_fp/sc_fp_media.h"
+ 
+ namespace blink {
++namespace {
++// SC-CEF M3: WebRTC / mediaDevices policy from fingerprint config
++bool ScFpWebRtcDisabled() {
++  std::string mode;
++  if (!sc_fp::OverrideWebRtcMode(&mode)) return false;
++  return mode == "disabled" || mode == "proxy_only";
++}
++}  // namespace
+ 
+ BASE_FEATURE(kEnumerateDevicesRequestAudioCapabilities,
+              "EnumerateDevicesRequestAudioCapabilities",

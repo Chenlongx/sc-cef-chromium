@@ -1,0 +1,37 @@
+From: SC-CEF <dev@mediamingle.cn>
+Subject: [PATCH] M2: hook canvas / webgl / audio
+
+diff --git a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
+index 50f4913..033c48d 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
+@@ -98,6 +98,7 @@
+ #include "third_party/blink/renderer/modules/webgl/oes_texture_float.h"
+ #include "third_party/blink/renderer/modules/webgl/oes_texture_float_linear.h"
+ #include "third_party/blink/renderer/modules/webgl/oes_texture_half_float.h"
++#include "third_party/sc_fp/sc_fp_render.h"
+ #include "third_party/blink/renderer/modules/webgl/oes_texture_half_float_linear.h"
+ #include "third_party/blink/renderer/modules/webgl/oes_vertex_array_object.h"
+ #include "third_party/blink/renderer/modules/webgl/webgl_active_info.h"
+@@ -181,6 +182,21 @@
+   GetCurrentUnpackState(params)
+ 
+ namespace blink {
++namespace {
++// SC-CEF M2: WebGL UNMASKED_* spoof helpers
++bool ScFpWebGlVendor(String* out) {
++  std::string v;
++  if (!sc_fp::OverrideWebGlVendor(&v) || v.empty() || !out) return false;
++  *out = String::FromUTF8(v.c_str());
++  return true;
++}
++bool ScFpWebGlRenderer(String* out) {
++  std::string r;
++  if (!sc_fp::OverrideWebGlRenderer(&r) || r.empty() || !out) return false;
++  *out = String::FromUTF8(r.c_str());
++  return true;
++}
++}  // namespace
+ 
+ bool WebGLRenderingContextBase::webgl_context_limits_initialized_ = false;
+ unsigned WebGLRenderingContextBase::max_active_webgl_contexts_ = 0;

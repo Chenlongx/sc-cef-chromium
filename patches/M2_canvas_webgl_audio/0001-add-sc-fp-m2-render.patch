@@ -1,0 +1,26 @@
+From: SC-CEF <dev@mediamingle.cn>
+Date: Wed, 29 Jul 2026 00:00:00 +0000
+Subject: [PATCH] M2: add third_party/sc_fp render engine (canvas/webgl/audio)
+
+Copy real sources from patches/M2_canvas_webgl_audio/src/ into third_party/sc_fp/
+after apply (or merge with M1 tree).
+
+---
+ third_party/sc_fp/README.sc_fp_m2 | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ create mode 100644 third_party/sc_fp/README.sc_fp_m2
+
+diff --git a/third_party/sc_fp/README.sc_fp_m2 b/third_party/sc_fp/README.sc_fp_m2
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/third_party/sc_fp/README.sc_fp_m2
+@@ -0,0 +1,6 @@
++SC-CEF M2 render spoof placeholder.
++
++  cp $SC_CEF_CHROMIUM/patches/M2_canvas_webgl_audio/src/* third_party/sc_fp/
++
++Wire ApplyCanvasNoise / OverrideWebGl* / ApplyAudioDither at Blink call sites
++(see 0002-hook-skia-webgl-audio.patch).
+--
+2.39.0

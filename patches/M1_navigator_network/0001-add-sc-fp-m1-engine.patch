@@ -1,0 +1,48 @@
+From: SC-CEF <dev@mediamingle.cn>
+Date: Wed, 29 Jul 2026 00:00:00 +0000
+Subject: [PATCH] M1: add third_party/sc_fp navigator/network engine
+
+Adds the SC fingerprint engine sources under third_party/sc_fp/.
+Call-site hooks are in 0002 (regenerate against pinned Chromium).
+
+---
+ third_party/sc_fp/BUILD.gn            |  12 ++++++++++++
+ third_party/sc_fp/sc_fp_engine.cc     |   1 +
+ third_party/sc_fp/sc_fp_engine.h      |   1 +
+ third_party/sc_fp/sc_fp_navigator_hooks.h | 1 +
+ 4 files changed, 15 insertions(+)
+ create mode 100644 third_party/sc_fp/BUILD.gn
+ create mode 100644 third_party/sc_fp/sc_fp_engine.cc
+ create mode 100644 third_party/sc_fp/sc_fp_engine.h
+ create mode 100644 third_party/sc_fp/sc_fp_navigator_hooks.h
+
+diff --git a/third_party/sc_fp/BUILD.gn b/third_party/sc_fp/BUILD.gn
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/third_party/sc_fp/BUILD.gn
+@@ -0,0 +1,12 @@
++# SC-CEF fingerprint engine (M1). Copy sources from
++# sc-cef-chromium/patches/M1_navigator_network/src/ before building.
++source_set("sc_fp") {
++  sources = [
++    "sc_fp_engine.cc",
++    "sc_fp_engine.h",
++    "sc_fp_navigator_hooks.h",
++  ]
++}
+diff --git a/third_party/sc_fp/README.sc_fp b/third_party/sc_fp/README.sc_fp
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/third_party/sc_fp/README.sc_fp
+@@ -0,0 +1,8 @@
++SC-CEF M1 fingerprint engine placeholder.
++
++After applying this patch, copy the real sources:
++
++  cp -R $SC_CEF_CHROMIUM/patches/M1_navigator_network/src/* third_party/sc_fp/
++
++Then wire sc_fp::Override* into Blink / net (see 0002-hook-navigator-network.patch).
+--
+2.39.0

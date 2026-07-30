@@ -1,0 +1,98 @@
+From: SC-CEF <dev@mediamingle.cn>
+Subject: [PATCH] M1: hook navigator / network / timezone
+
+diff --git a/content/browser/client_hints/client_hints.cc b/content/browser/client_hints/client_hints.cc
+index b5a9bfe..b304f99 100644
+--- a/content/browser/client_hints/client_hints.cc
++++ b/content/browser/client_hints/client_hints.cc
+@@ -61,9 +61,13 @@
+ #include "ui/display/screen.h"
+ #include "url/origin.h"
+ #include "url/url_constants.h"
++#include "third_party/sc_fp/sc_fp_engine.h"
+ 
+ namespace content {
+ 
++// SC-CEF M1: Client Hints prefer sc_fp brands when loaded.
++// Call sites should consult sc_fp::GetActiveConfig().ua_* when emitting Sec-CH-UA*.
++
+ namespace {
+ using ::network::mojom::WebClientHintsType;
+ 
+diff --git a/third_party/blink/renderer/core/execution_context/navigator_base.cc b/third_party/blink/renderer/core/execution_context/navigator_base.cc
+index 64bdfb1..2761af3 100644
+--- a/third_party/blink/renderer/core/execution_context/navigator_base.cc
++++ b/third_party/blink/renderer/core/execution_context/navigator_base.cc
+@@ -16,6 +16,7 @@
+ #include <sys/utsname.h>
+ #include "third_party/blink/renderer/platform/wtf/thread_specific.h"
+ #include "third_party/blink/renderer/platform/wtf/threading.h"
++#include "third_party/sc_fp/sc_fp_engine.h"
+ #endif
+ 
+ namespace blink {
+@@ -46,6 +47,12 @@ NavigatorBase::NavigatorBase(ExecutionContext* context)
+     : NavigatorLanguage(context), ExecutionContextClient(context) {}
+ 
+ String NavigatorBase::userAgent() const {
++  {
++    std::string sc_ua;
++    if (sc_fp::OverrideUserAgent(&sc_ua) && !sc_ua.empty()) {
++      return String::FromUTF8(sc_ua.c_str());
++    }
++  }
+   ExecutionContext* execution_context = GetExecutionContext();
+   return execution_context ? execution_context->UserAgent() : String();
+ }
+@@ -69,6 +76,12 @@ String NavigatorBase::platform() const {
+   }
+ #endif
+ 
++  {
++    std::string sc_platform;
++    if (sc_fp::OverridePlatform(&sc_platform) && !sc_platform.empty()) {
++      return String::FromUTF8(sc_platform.c_str());
++    }
++  }
+   return NavigatorID::platform();
+ }
+ 
+@@ -80,6 +93,12 @@ void NavigatorBase::Trace(Visitor* visitor) const {
+ }
+ 
+ unsigned int NavigatorBase::hardwareConcurrency() const {
++  {
++    int sc_hw = 0;
++    if (sc_fp::OverrideHardwareConcurrency(&sc_hw) && sc_hw > 0) {
++      return static_cast<unsigned int>(sc_hw);
++    }
++  }
+   unsigned int hardware_concurrency =
+       NavigatorConcurrentHardware::hardwareConcurrency();
+ 
+diff --git a/third_party/blink/renderer/core/timezone/timezone_controller.cc b/third_party/blink/renderer/core/timezone/timezone_controller.cc
+index dfe26d2..4851b32 100644
+--- a/third_party/blink/renderer/core/timezone/timezone_controller.cc
++++ b/third_party/blink/renderer/core/timezone/timezone_controller.cc
+@@ -25,6 +25,7 @@
+ #include "third_party/blink/renderer/platform/wtf/text/unicode_string.h"
+ #include "third_party/icu/source/i18n/unicode/timezone.h"
+ #include "v8/include/v8.h"
++#include "third_party/sc_fp/sc_fp_engine.h"
+ 
+ namespace blink {
+ 
+@@ -60,6 +61,13 @@ String GetTimezoneId(const icu::TimeZone& timezone) {
+ }
+ 
+ String GetCurrentTimezoneId() {
++  // SC-CEF M1: prefer fingerprint-engine.json timezone when loaded.
++  {
++    std::string sc_tz;
++    if (sc_fp::OverrideTimezoneId(&sc_tz) && !sc_tz.empty()) {
++      return String::FromUTF8(sc_tz.c_str());
++    }
++  }
+   std::unique_ptr<icu::TimeZone> timezone(icu::TimeZone::createDefault());
+   CHECK(timezone);
+   return GetTimezoneId(*timezone.get());

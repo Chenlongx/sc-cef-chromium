@@ -1,0 +1,22 @@
+From: SC-CEF <dev@mediamingle.cn>
+Date: Wed, 29 Jul 2026 00:00:00 +0000
+Subject: [PATCH] M3: add third_party/sc_fp media engine
+
+---
+ third_party/sc_fp/README.sc_fp_m3 | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 third_party/sc_fp/README.sc_fp_m3
+
+diff --git a/third_party/sc_fp/README.sc_fp_m3 b/third_party/sc_fp/README.sc_fp_m3
+new file mode 100644
+index 0000000..4444444
+--- /dev/null
++++ b/third_party/sc_fp/README.sc_fp_m3
+@@ -0,0 +1,5 @@
++SC-CEF M3 media spoof placeholder.
++
++  cp $SC_CEF_CHROMIUM/patches/M3_fonts_webrtc/src/* third_party/sc_fp/
++
++Wire AllowFontFamily / mediaDevices / WebRTC ICE at Blink call sites.
+--
+2.39.0
